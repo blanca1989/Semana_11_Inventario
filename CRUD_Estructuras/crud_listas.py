@@ -1,41 +1,25 @@
 """
-crud_listas.py
-Sistema de Inventario de una tienda usando LISTAS.
-
-LISTA = colección ORDENADA y MUTABLE
-En este caso cada elemento será un producto del inventario.
+crud_listas_inventario.py
+Demostración de CRUD usando LISTAS para el inventario de una tienda.
 """
+
 
 class CRUDListas:
 
     def __init__(self):
-
         """
-        Lista inicial del inventario
-        Cada producto es un diccionario
+        CONSTRUCTOR:
+        Inicializamos la lista con productos del inventario.
         """
-
-        self.items = [
-            {"id": "P001", "nombre": "Laptop", "cantidad": 10, "precio": 900},
-            {"id": "P002", "nombre": "Mouse", "cantidad": 50, "precio": 10},
-            {"id": "P003", "nombre": "Teclado", "cantidad": 25, "precio": 20}
-        ]
+        self.items = ["arroz", "leche", "azúcar"]  # inventario inicial
 
     # -------------------------
-    # CREATE
+    # CREATE (agregar)
     # -------------------------
-    def agregar(self, id_p, nombre, cantidad, precio):
+    def agregar(self, nuevo_item: str):
 
-        producto = {
-            "id": id_p,
-            "nombre": nombre,
-            "cantidad": cantidad,
-            "precio": precio
-        }
-
-        self.items.append(producto)
-
-        print(f"✅ Producto agregado: {nombre}")
+        self.items.append(nuevo_item)
+        print(f"✅ Producto agregado al inventario: {nuevo_item}")
 
     # -------------------------
     # READ (listar)
@@ -43,159 +27,108 @@ class CRUDListas:
     def listar(self):
 
         if not self.items:
-            print("📭 Inventario vacío.")
+            print("📭 El inventario está vacío.")
             return
 
-        print("\n📦 INVENTARIO DE LA TIENDA")
+        print("\n📦 INVENTARIO DE LA TIENDA:")
 
-        for indice, producto in enumerate(self.items):
-
-            print(
-                f"[{indice}] "
-                f"{producto['id']} | "
-                f"{producto['nombre']} | "
-                f"Stock: {producto['cantidad']} | "
-                f"Precio: ${producto['precio']}"
-            )
+        for indice, valor in enumerate(self.items):
+            print(f"  [{indice}] {valor}")
 
     # -------------------------
     # READ (buscar)
     # -------------------------
-    def buscar(self, nombre_producto):
+    def buscar(self, item_buscado: str):
 
-        for indice, producto in enumerate(self.items):
-
-            if producto["nombre"].lower() == nombre_producto.lower():
-
-                print(
-                    f"🔎 Encontrado en índice {indice}: "
-                    f"{producto['id']} | "
-                    f"{producto['nombre']} | "
-                    f"Stock: {producto['cantidad']} | "
-                    f"Precio: ${producto['precio']}"
-                )
-
+        for indice, valor in enumerate(self.items):
+            if valor == item_buscado:
+                print(f"🔎 Producto encontrado '{item_buscado}' en índice {indice}")
                 return indice
 
-        print("❌ Producto no encontrado")
-
+        print(f"❌ No se encontró el producto '{item_buscado}'")
         return None
 
     # -------------------------
-    # UPDATE
+    # UPDATE (actualizar)
     # -------------------------
-    def actualizar(self, indice, nueva_cantidad, nuevo_precio):
+    def actualizar(self, indice: int, nuevo_valor: str):
 
         if 0 <= indice < len(self.items):
 
-            producto = self.items[indice]
+            anterior = self.items[indice]
+            self.items[indice] = nuevo_valor
 
-            producto["cantidad"] = nueva_cantidad
-            producto["precio"] = nuevo_precio
-
-            print("✏️ Producto actualizado")
+            print(f"✏️ Producto actualizado índice {indice}: '{anterior}' -> '{nuevo_valor}'")
 
         else:
-
-            print("⚠️ Índice fuera de rango")
+            print("⚠️ Índice fuera de rango. No se pudo actualizar.")
 
     # -------------------------
-    # DELETE
+    # DELETE (eliminar)
     # -------------------------
-    def eliminar(self, nombre_producto):
+    def eliminar(self, item_a_eliminar: str):
 
-        for producto in self.items:
+        try:
+            self.items.remove(item_a_eliminar)
+            print(f"🗑️ Producto eliminado del inventario: {item_a_eliminar}")
 
-            if producto["nombre"].lower() == nombre_producto.lower():
-
-                self.items.remove(producto)
-
-                print(f"🗑️ Producto eliminado: {nombre_producto}")
-
-                return
-
-        print("⚠️ Producto no encontrado")
+        except ValueError:
+            print(f"⚠️ El producto '{item_a_eliminar}' no existe en el inventario.")
 
 
-# -------------------------
-# MENÚ
-# -------------------------
 def menu():
-
     crud = CRUDListas()
 
     while True:
 
-        print("""
-==============================
- INVENTARIO TIENDA (LISTAS)
-==============================
-1) Listar productos
-2) Agregar producto
-3) Buscar producto
-4) Actualizar producto
-5) Eliminar producto
-0) Salir
-==============================
-""")
+        print("\n===== INVENTARIO DE LA TIENDA (LISTA) =====")
+        print("1) Listar productos")
+        print("2) Agregar producto")
+        print("3) Buscar producto")
+        print("4) Actualizar producto")
+        print("5) Eliminar producto")
+        print("0) Salir")
 
-        opcion = input("Seleccione opción: ").strip()
+        opcion = input("Elige una opción: ").strip()
 
         if opcion == "1":
             crud.listar()
 
         elif opcion == "2":
-
-            id_p = input("ID producto: ")
-            nombre = input("Nombre: ")
-
-            try:
-                cantidad = int(input("Cantidad: "))
-                precio = float(input("Precio: "))
-
-                crud.agregar(id_p, nombre, cantidad, precio)
-
-            except ValueError:
-
-                print("⚠️ Cantidad y precio deben ser números")
+            nuevo = input("Nuevo producto: ").strip()
+            if nuevo:
+                crud.agregar(nuevo)
+            else:
+                print("⚠️ No se agregó: nombre vacío.")
 
         elif opcion == "3":
-
-            nombre = input("Producto a buscar: ")
-
-            crud.buscar(nombre)
+            buscado = input("Producto a buscar: ").strip()
+            crud.buscar(buscado)
 
         elif opcion == "4":
 
             crud.listar()
 
             try:
-
-                indice = int(input("Índice a actualizar: "))
-                cantidad = int(input("Nueva cantidad: "))
-                precio = float(input("Nuevo precio: "))
-
-                crud.actualizar(indice, cantidad, precio)
+                indice = int(input("Índice del producto a actualizar: ").strip())
+                nuevo_valor = input("Nuevo nombre del producto: ").strip()
+                crud.actualizar(indice, nuevo_valor)
 
             except ValueError:
-
-                print("⚠️ Datos inválidos")
+                print("⚠️ Índice inválido.")
 
         elif opcion == "5":
 
-            nombre = input("Producto a eliminar: ")
-
-            crud.eliminar(nombre)
+            eliminar = input("Producto a eliminar: ").strip()
+            crud.eliminar(eliminar)
 
         elif opcion == "0":
 
-            print("👋 Saliendo del sistema")
-
+            print("👋 Saliendo del sistema de inventario...")
             break
 
         else:
-
-            print("⚠️ Opción inválida")
+            print("⚠️ Opción inválida.")
 
 
 if __name__ == "__main__":
