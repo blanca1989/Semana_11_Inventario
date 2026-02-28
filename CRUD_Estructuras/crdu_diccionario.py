@@ -1,27 +1,28 @@
 """
-crud_diccionarios.py
-Sistema de Gestión de Inventario usando DICCIONARIOS.
-
-DICCIONARIO = clave -> valor
-En este caso:
-ID_PRODUCTO -> {nombre, cantidad, precio}
+crud_diccionarios_inventario.py
+CRUD usando DICCIONARIOS aplicado a un INVENTARIO DE TIENDA.
 """
 
-class CrudDiccionarios:
+class CrudDiccionariosInventario:
 
     def __init__(self):
         """
-        Diccionario inicial del inventario
+        Diccionario del inventario
+        ID -> datos del producto
         """
+
         self.productos = {
-            "P001": {"nombre": "Laptop", "cantidad": 10, "precio": 900},
-            "P002": {"nombre": "Mouse", "cantidad": 50, "precio": 10},
-            "P003": {"nombre": "Teclado", "cantidad": 25, "precio": 20}
+
+            "P001": {"nombre": "Arroz", "cantidad": 50, "precio": 1.20},
+            "P002": {"nombre": "Leche", "cantidad": 30, "precio": 0.90},
+            "P003": {"nombre": "Azúcar", "cantidad": 40, "precio": 1.10}
+
         }
 
     # -------------------------
     # CREATE
     # -------------------------
+
     def agregar(self, id_producto, nombre, cantidad, precio):
 
         if id_producto in self.productos:
@@ -34,11 +35,12 @@ class CrudDiccionarios:
             "precio": precio
         }
 
-        print(f"✅ Producto agregado: {nombre}")
+        print("✅ Producto agregado al inventario")
 
     # -------------------------
-    # READ (listar)
+    # READ (LISTAR)
     # -------------------------
+
     def listar(self):
 
         if not self.productos:
@@ -57,23 +59,23 @@ class CrudDiccionarios:
             )
 
     # -------------------------
-    # READ (buscar)
+    # READ (BUSCAR)
     # -------------------------
-    def buscar(self, id_producto):
 
-        if id_producto in self.productos:
+    def buscar(self, clave):
 
-            p = self.productos[id_producto]
+        if clave in self.productos:
+
+            datos = self.productos[clave]
 
             print(
-                f"🔎 Encontrado → "
-                f"{id_producto} | "
-                f"{p['nombre']} | "
-                f"Stock: {p['cantidad']} | "
-                f"Precio: ${p['precio']}"
+                f"🔎 Producto encontrado:\n"
+                f"{clave} | {datos['nombre']} | "
+                f"Stock: {datos['cantidad']} | "
+                f"Precio: ${datos['precio']}"
             )
 
-            return p
+            return datos
 
         print("❌ Producto no encontrado")
         return None
@@ -81,88 +83,82 @@ class CrudDiccionarios:
     # -------------------------
     # UPDATE
     # -------------------------
-    def actualizar(self, id_producto):
 
-        if id_producto not in self.productos:
-            print("⚠️ Producto no existe")
-            return
+    def actualizar(self, clave, cantidad, precio):
 
-        try:
+        if clave in self.productos:
 
-            nueva_cantidad = int(input("Nueva cantidad: "))
-            nuevo_precio = float(input("Nuevo precio: "))
-
-            self.productos[id_producto]["cantidad"] = nueva_cantidad
-            self.productos[id_producto]["precio"] = nuevo_precio
+            self.productos[clave]["cantidad"] = cantidad
+            self.productos[clave]["precio"] = precio
 
             print("✏️ Producto actualizado")
 
-        except ValueError:
-            print("⚠️ Datos inválidos")
+        else:
+            print("⚠️ Producto no existe")
 
     # -------------------------
     # DELETE
     # -------------------------
-    def eliminar(self, id_producto):
 
-        eliminado = self.productos.pop(id_producto, None)
+    def eliminar(self, clave):
 
-        if eliminado is None:
-            print("⚠️ Producto no existe")
+        eliminado = self.productos.pop(clave, None)
+
+        if eliminado:
+            print(f"🗑️ Producto eliminado: {clave}")
         else:
-            print(f"🗑️ Producto eliminado: {eliminado['nombre']}")
+            print("⚠️ Producto no encontrado")
 
 
 # -------------------------
-# MENÚ PRINCIPAL
+# MENÚ
 # -------------------------
+
 def menu():
 
-    inventario = CrudDiccionarios()
+    crud = CrudDiccionariosInventario()
 
     while True:
 
-        print("""
-==============================
- SISTEMA INVENTARIO TIENDA
-==============================
-1) Listar productos
-2) Agregar producto
-3) Buscar producto
-4) Actualizar producto
-5) Eliminar producto
-0) Salir
-==============================
-""")
+        print("\n===== INVENTARIO TIENDA =====")
+        print("1) Listar productos")
+        print("2) Agregar producto")
+        print("3) Buscar producto")
+        print("4) Actualizar producto")
+        print("5) Eliminar producto")
+        print("0) Salir")
 
         opcion = input("Seleccione opción: ")
 
         if opcion == "1":
-            inventario.listar()
+            crud.listar()
 
         elif opcion == "2":
 
-            id_p = input("ID producto (ej: P004): ")
+            id_p = input("ID producto: ")
             nombre = input("Nombre: ")
+            cantidad = int(input("Cantidad: "))
+            precio = float(input("Precio: "))
 
-            try:
-                cantidad = int(input("Cantidad: "))
-                precio = float(input("Precio: "))
-                inventario.agregar(id_p, nombre, cantidad, precio)
-            except ValueError:
-                print("⚠️ Cantidad y precio deben ser números")
+            crud.agregar(id_p, nombre, cantidad, precio)
 
         elif opcion == "3":
-            id_p = input("ID producto: ")
-            inventario.buscar(id_p)
+
+            id_p = input("ID a buscar: ")
+            crud.buscar(id_p)
 
         elif opcion == "4":
-            id_p = input("ID producto: ")
-            inventario.actualizar(id_p)
+
+            id_p = input("ID a actualizar: ")
+            cantidad = int(input("Nueva cantidad: "))
+            precio = float(input("Nuevo precio: "))
+
+            crud.actualizar(id_p, cantidad, precio)
 
         elif opcion == "5":
-            id_p = input("ID producto: ")
-            inventario.eliminar(id_p)
+
+            id_p = input("ID a eliminar: ")
+            crud.eliminar(id_p)
 
         elif opcion == "0":
             print("👋 Saliendo del sistema")
